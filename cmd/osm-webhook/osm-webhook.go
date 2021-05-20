@@ -79,13 +79,6 @@ func main() {
 	stop := signals.RegisterExitHandlers()
 
 	serveMux := http.NewServeMux()
-	server := &http.Server{
-		Addr:    fmt.Sprint(":", *port),
-		Handler: serveMux,
-		TLSConfig: &tls.Config{
-			Certificates: []tls.Certificate{},
-		},
-	}
 
 	serveMux.Handle("/version", version.GetVersionHandler())
 	serveMux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -98,14 +91,17 @@ func main() {
 
 	cert := getCertificate(stop)
 
-	// #nosec G402
-	server.TLSConfig = &tls.Config{
-		Certificates: []tls.Certificate{cert},
+	server := &http.Server{
+		Addr:    fmt.Sprint(":", *port),
+		Handler: serveMux,
+		TLSConfig : &tls.Config{
+			Certificates: []tls.Certificate{cert},
+		},
 	}
 
 	err := server.ListenAndServeTLS("", "")
 	if err != nil {
-		log.Error().Err(err).Msgf("Failed to start OSM metrics/probes HTTP server")
+		log.Fatal().Err(err).Msgf("Failed to start OSM metrics/probes HTTP server")
 	}
 
 	<-stop

@@ -54,14 +54,14 @@ spec:
             initialDelaySeconds: 1
             timeoutSeconds: 5
             httpGet:
-              scheme: HTTP
+              scheme: HTTPS
               path: /health/ready
               port: {{ .Values.OpenServiceMesh.osmwebhook.port }}
           livenessProbe:
             initialDelaySeconds: 1
             timeoutSeconds: 5
-            httpGet:
-              scheme: HTTP
+            httpGet: 
+              scheme: HTTPS
               path: /health/alive
               port: {{ .Values.OpenServiceMesh.osmwebhook.port }}
 
